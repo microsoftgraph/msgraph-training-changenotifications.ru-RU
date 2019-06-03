@@ -1,0 +1,23 @@
+<!-- markdownlint-disable MD002 MD041 -->
+
+<span data-ttu-id="47248-101">Чтобы запустить приложение, выберите **отладка > начать отладку** .</span><span class="sxs-lookup"><span data-stu-id="47248-101">Select **Debug > Start debugging** to run the application.</span></span> <span data-ttu-id="47248-102">После создания приложения откроется окно браузера со страницей 404.</span><span class="sxs-lookup"><span data-stu-id="47248-102">After building the application a browser window will open to a 404 page.</span></span> <span data-ttu-id="47248-103">Это нормально, так как наше приложение является API, а не веб-страницей.</span><span class="sxs-lookup"><span data-stu-id="47248-103">This is ok since our application is an API and not a webpage.</span></span>
+
+<span data-ttu-id="47248-104">Чтобы подписаться на уведомления об изменениях для пользователей, перейдите `http://localhost:5000/api/notifications`по следующему URL-адресу.</span><span class="sxs-lookup"><span data-stu-id="47248-104">To subscribe for change notifications for users navigate to the following url `http://localhost:5000/api/notifications`.</span></span> <span data-ttu-id="47248-105">При успешном выполнении вы увидите выходные данные, включающие идентификатор подписки, подобный показанному ниже:</span><span class="sxs-lookup"><span data-stu-id="47248-105">If successful you will see output that includes a subscription id like the one below:</span></span>
+
+```shell
+Subscribed. Id: e2dbfbe1-160b-42b0-9b9f-8ab79bf8dfed
+```
+
+<span data-ttu-id="47248-106">Теперь ваше приложение подписано на получение уведомлений от Microsoft Graph при обновлении пользователей в клиенте Office 365.</span><span class="sxs-lookup"><span data-stu-id="47248-106">Your application is now subscribed to receive notifications from the Microsoft Graph when an update is made on any users in the Office 365 tenant.</span></span>
+
+<span data-ttu-id="47248-107">Откройте браузер и перейдите в [центр администрирования Microsoft 365](https://admin.microsoft.com/AdminPortal).</span><span class="sxs-lookup"><span data-stu-id="47248-107">Open a browser and visit the [Microsoft 365 admin center](https://admin.microsoft.com/AdminPortal).</span></span> <span data-ttu-id="47248-108">Войдите с помощью учетной записи администратора.</span><span class="sxs-lookup"><span data-stu-id="47248-108">Sign-in using an administrator account.</span></span> <span data-ttu-id="47248-109">Выберите **пользователи > активные пользователи**.</span><span class="sxs-lookup"><span data-stu-id="47248-109">Select **Users > Active users**.</span></span> <span data-ttu-id="47248-110">Выберите активного пользователя и нажмите **изменить** для его **контактной информации**.</span><span class="sxs-lookup"><span data-stu-id="47248-110">Select an active user and select **Edit** for their **Contact information**.</span></span> <span data-ttu-id="47248-111">Обновите значение **мобильного телефона** , указав новое число и нажмите кнопку **сохранить**.</span><span class="sxs-lookup"><span data-stu-id="47248-111">Update the **Mobile phone** value with a new number and Select **Save**.</span></span>
+
+![Снимок экрана сведений о пользователе](./images/03.png)
+
+<span data-ttu-id="47248-113">В **консоли отладки** Visual Studio вы увидите, что получено уведомление.</span><span class="sxs-lookup"><span data-stu-id="47248-113">In the **DEBUG CONSOLE** of Visual Studio you will see a notification has been received.</span></span> <span data-ttu-id="47248-114">Иногда это может занять несколько минут.</span><span class="sxs-lookup"><span data-stu-id="47248-114">Sometimes this may take a few minutes to arrive.</span></span> <span data-ttu-id="47248-115">Ниже приведен пример выходных данных.</span><span class="sxs-lookup"><span data-stu-id="47248-115">An example of the output is below:</span></span>
+
+```shell
+Received notification: 'Users/7a7fded6-0269-42c2-a0be-512d58da4463', 7a7fded6-0269-42c2-a0be-512d58da4463
+```
+
+<span data-ttu-id="47248-116">Это означает, что приложение успешно получало уведомление от Microsoft Graph для пользователя, указанного в выходных данных.</span><span class="sxs-lookup"><span data-stu-id="47248-116">This indicates the application successfully received the notification from the Microsoft Graph for the user specified in the output.</span></span> <span data-ttu-id="47248-117">После этого вы можете использовать эти сведения для получения подробных сведений о пользователях, если вы хотите синхронизировать их с приложением.</span><span class="sxs-lookup"><span data-stu-id="47248-117">You can then use this information to query the graph for the users full details if you want to synchronize their details into your application.</span></span>
