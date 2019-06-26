@@ -1,44 +1,13 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-### <a name="query-for-changes"></a><span data-ttu-id="e03f0-101">Запрос изменений</span><span class="sxs-lookup"><span data-stu-id="e03f0-101">Query for changes</span></span>
+### <a name="query-for-changes"></a><span data-ttu-id="8f046-101">Запрос изменений</span><span class="sxs-lookup"><span data-stu-id="8f046-101">Query for changes</span></span>
 
-<span data-ttu-id="e03f0-102">Microsoft Graph предоставляет возможность запрашивать изменения в определенном ресурсе с момента его последнего вызова.</span><span class="sxs-lookup"><span data-stu-id="e03f0-102">Microsoft Graph offers the ability to query for changes to a particular resource since you last called it.</span></span> <span data-ttu-id="e03f0-103">Совместное использование с уведомлениями об изменениях является надежным методом, обеспечивающим отсутствие каких-либо изменений в ресурсах.</span><span class="sxs-lookup"><span data-stu-id="e03f0-103">Using this combined with Change Notifications is a robust method for ensuring you don't miss any changes to the resources.</span></span>
+<span data-ttu-id="8f046-102">Microsoft Graph предоставляет возможность запрашивать изменения в определенном ресурсе с момента его последнего вызова.</span><span class="sxs-lookup"><span data-stu-id="8f046-102">Microsoft Graph offers the ability to query for changes to a particular resource since you last called it.</span></span> <span data-ttu-id="8f046-103">При использовании этого параметра вместе с уведомлениями об изменениях включается надежный шаблон, который не может быть проигнорированием изменений в ресурсах.</span><span class="sxs-lookup"><span data-stu-id="8f046-103">Using this option, combined with Change Notifications, enables a robust pattern for ensuring you don't miss any changes to the resources.</span></span>
 
-<span data-ttu-id="e03f0-104">Откройте **NotificationsController.CS** и замените `Post` метод следующим кодом:</span><span class="sxs-lookup"><span data-stu-id="e03f0-104">Open **NotificationsController.cs** and replace the `Post` method with the following code:</span></span>
+<span data-ttu-id="8f046-104">Откройте и откройте следующий контроллер: **controllers > NotificationsController.CS**.</span><span class="sxs-lookup"><span data-stu-id="8f046-104">Locate and open the following controller: **Controllers > NotificationsController.cs**.</span></span>
+<span data-ttu-id="8f046-105">Добавьте следующий код к существующему `NotificationsController` классу.</span><span class="sxs-lookup"><span data-stu-id="8f046-105">Add the following code to the existing `NotificationsController` class.</span></span>
 
-```csharp
-public ActionResult<string> Post([FromQuery]string validationToken = null)
-{
-  // handle validation
-  if(!string.IsNullOrEmpty(validationToken))
-  {
-    Console.WriteLine($"Received Token: '{validationToken}'");
-    return Ok(validationToken);
-  }
-
-  // handle notifications
-  using (StreamReader reader = new StreamReader(Request.Body))
-  {
-    string content = reader.ReadToEnd();
-
-    Console.WriteLine(content);
-
-    var notifications = JsonConvert.DeserializeObject<Notifications>(content);
-
-    foreach(var notification in notifications.Items)
-    {
-      Console.WriteLine($"Received notification: '{notification.Resource}', {notification.ResourceData?.Id}");
-    }
-  }
-
-  // use deltaquery to query for all updates
-  CheckForUpdates();
-
-  return Ok();
-}
-```
-
-<span data-ttu-id="e03f0-105">`Post` Метод теперь будет вызываться `CheckForUpdates` при получении уведомления.</span><span class="sxs-lookup"><span data-stu-id="e03f0-105">The `Post` method will now call `CheckForUpdates` when a notification is received.</span></span> <span data-ttu-id="e03f0-106">Под `Post` методом добавьте следующие два новых метода:</span><span class="sxs-lookup"><span data-stu-id="e03f0-106">Below the `Post` method add the following two new methods:</span></span>
+<span data-ttu-id="8f046-106">Этот код включает новый метод `CheckForUpdates()`, который будет вызывать Microsoft Graph с использованием URL-адреса Дельта, а затем страницы по результатам до тех пор, пока не `deltalink` обнаружит новый на завершающей странице результатов.</span><span class="sxs-lookup"><span data-stu-id="8f046-106">This code includes a new method, `CheckForUpdates()`, that will call the Microsoft Graph using the delta url and then pages through the results until it finds a new `deltalink` on the final page of results.</span></span> <span data-ttu-id="8f046-107">URL-адрес сохраняется в памяти до тех пор, пока код не будет снова уведомлен при срабатывании другого уведомления.</span><span class="sxs-lookup"><span data-stu-id="8f046-107">It stores the url in memory until the code is notified again when another notification is triggered.</span></span>
 
 ```csharp
 private static object DeltaLink = null;
@@ -57,15 +26,15 @@ private void CheckForUpdates()
   // go through all of the pages so that we can get the delta link on the last page.
   while (users.NextPageRequest != null)
   {
-      users = users.NextPageRequest.GetAsync().Result;
-      OutputUsers(users);
+    users = users.NextPageRequest.GetAsync().Result;
+    OutputUsers(users);
   }
 
   object deltaLink;
 
   if (users.AdditionalData.TryGetValue("@odata.deltaLink", out deltaLink))
   {
-      DeltaLink = deltaLink;
+    DeltaLink = deltaLink;
   }
 }
 
@@ -103,25 +72,63 @@ private IUserDeltaCollectionPage GetUsers(GraphServiceClient graphClient, object
 }
 ```
 
-<span data-ttu-id="e03f0-107">`CheckForUpdates` Метод вызывает граф с помощью URL-адреса Дельта, а затем страницы по результатам, пока не обнаружит новый `deltalink` на конечной странице результатов.</span><span class="sxs-lookup"><span data-stu-id="e03f0-107">The `CheckForUpdates` method calls the graph using the delta url and then pages through the results until it finds a new `deltalink` on the final page of results.</span></span> <span data-ttu-id="e03f0-108">URL-адрес сохраняется в памяти до тех пор, пока код не будет снова уведомлен при срабатывании другого уведомления.</span><span class="sxs-lookup"><span data-stu-id="e03f0-108">It stores the url in memory until the code is notified again when another notification is triggered.</span></span>
+<span data-ttu-id="8f046-108">Откройте существующий `Post()` метод и замените его следующим кодом:</span><span class="sxs-lookup"><span data-stu-id="8f046-108">Locate the existing `Post()` method and replace it with the following code:</span></span>
 
-<span data-ttu-id="e03f0-109">**Сохраните** все файлы.</span><span class="sxs-lookup"><span data-stu-id="e03f0-109">**Save** all files.</span></span>
+```csharp
+public ActionResult<string> Post([FromQuery]string validationToken = null)
+{
+  // handle validation
+  if(!string.IsNullOrEmpty(validationToken))
+  {
+    Console.WriteLine($"Received Token: '{validationToken}'");
+    return Ok(validationToken);
+  }
 
-<span data-ttu-id="e03f0-110">Чтобы запустить приложение, выберите **отладка > начать отладку** .</span><span class="sxs-lookup"><span data-stu-id="e03f0-110">Select **Debug > Start debugging** to run the application.</span></span> <span data-ttu-id="e03f0-111">После создания приложения откроется окно браузера со страницей 404.</span><span class="sxs-lookup"><span data-stu-id="e03f0-111">After building the application a browser window will open to a 404 page.</span></span> <span data-ttu-id="e03f0-112">Это нормально, так как наше приложение является API, а не веб-страницей.</span><span class="sxs-lookup"><span data-stu-id="e03f0-112">This is ok since our application is an API and not a webpage.</span></span>
+  // handle notifications
+  using (StreamReader reader = new StreamReader(Request.Body))
+  {
+    string content = reader.ReadToEnd();
 
-<span data-ttu-id="e03f0-113">Чтобы подписаться на уведомления об изменениях для пользователей, перейдите `http://localhost:5000/api/notifications`по следующему URL-адресу.</span><span class="sxs-lookup"><span data-stu-id="e03f0-113">To subscribe for change notifications for users navigate to the following url `http://localhost:5000/api/notifications`.</span></span>
+    Console.WriteLine(content);
 
-<span data-ttu-id="e03f0-114">Откройте браузер и перейдите в [центр администрирования Microsoft 365](https://admin.microsoft.com/AdminPortal).</span><span class="sxs-lookup"><span data-stu-id="e03f0-114">Open a browser and visit the [Microsoft 365 admin center](https://admin.microsoft.com/AdminPortal).</span></span> <span data-ttu-id="e03f0-115">Войдите с помощью учетной записи администратора.</span><span class="sxs-lookup"><span data-stu-id="e03f0-115">Sign-in using an administrator account.</span></span> <span data-ttu-id="e03f0-116">Выберите **пользователи > активные пользователи**.</span><span class="sxs-lookup"><span data-stu-id="e03f0-116">Select **Users > Active users**.</span></span> <span data-ttu-id="e03f0-117">Выберите активного пользователя и нажмите **изменить** для его **контактной информации**.</span><span class="sxs-lookup"><span data-stu-id="e03f0-117">Select an active user and select **Edit** for their **Contact information**.</span></span> <span data-ttu-id="e03f0-118">Обновите значение **мобильного телефона** , указав новое число и нажмите кнопку **сохранить**.</span><span class="sxs-lookup"><span data-stu-id="e03f0-118">Update the **Mobile phone** value with a new number and Select **Save**.</span></span>
+    var notifications = JsonConvert.DeserializeObject<Notifications>(content);
 
-![Снимок экрана сведений о пользователе](./images/10.png)
+    foreach(var notification in notifications.Items)
+    {
+      Console.WriteLine($"Received notification: '{notification.Resource}', {notification.ResourceData?.Id}");
+    }
+  }
 
-<span data-ttu-id="e03f0-120">Дождитесь получения уведомления, как указано в **консоли отладки** , следующим образом:</span><span class="sxs-lookup"><span data-stu-id="e03f0-120">Wait for the notification to be received as indicated in the **DEBUG CONSOLE** as follows:</span></span>
+  // use deltaquery to query for all updates
+  CheckForUpdates();
+
+  return Ok();
+}
+```
+
+<span data-ttu-id="8f046-109">`Post` Метод теперь будет вызываться `CheckForUpdates` при получении уведомления.</span><span class="sxs-lookup"><span data-stu-id="8f046-109">The `Post` method will now call `CheckForUpdates` when a notification is received.</span></span> <span data-ttu-id="8f046-110">Под `Post` методом добавьте следующие два новых метода:</span><span class="sxs-lookup"><span data-stu-id="8f046-110">Below the `Post` method add the following two new methods:</span></span>
+
+<span data-ttu-id="8f046-111">**Сохраните** все файлы.</span><span class="sxs-lookup"><span data-stu-id="8f046-111">**Save** all files.</span></span>
+
+### <a name="test-your-changes"></a><span data-ttu-id="8f046-112">Протестируйте изменения:</span><span class="sxs-lookup"><span data-stu-id="8f046-112">Test your changes:</span></span>
+
+<span data-ttu-id="8f046-113">В Visual Studio Code выберите **отладка > начать отладку** для запуска приложения.</span><span class="sxs-lookup"><span data-stu-id="8f046-113">Within Visual Studio Code, select **Debug > Start debugging** to run the application.</span></span>
+<span data-ttu-id="8f046-114">Перейдите по следующему URL-адресу: **http://localhost:5000/api/notifications**.</span><span class="sxs-lookup"><span data-stu-id="8f046-114">Navigate to the following url: **http://localhost:5000/api/notifications**.</span></span> <span data-ttu-id="8f046-115">При этом будет зарегистрирована новая подписка.</span><span class="sxs-lookup"><span data-stu-id="8f046-115">This will register a new subscription.</span></span>
+
+<span data-ttu-id="8f046-116">Откройте браузер и перейдите в [центр администрирования Microsoft 365 (https://admin.microsoft.com/AdminPortal)](https://admin.microsoft.com/AdminPortal).</span><span class="sxs-lookup"><span data-stu-id="8f046-116">Open a browser and navigate to the [Microsoft 365 admin center (https://admin.microsoft.com/AdminPortal)](https://admin.microsoft.com/AdminPortal).</span></span>
+
+1. <span data-ttu-id="8f046-117">Если вам будет предложено войти, войдите с помощью учетной записи администратора.</span><span class="sxs-lookup"><span data-stu-id="8f046-117">If prompted to login, sign-in using an admin account.</span></span>
+1. <span data-ttu-id="8f046-118">Выберите **пользователи > активные пользователи**.</span><span class="sxs-lookup"><span data-stu-id="8f046-118">Select **Users > Active users**.</span></span> 
+1. <span data-ttu-id="8f046-119">Выберите активного пользователя и нажмите **изменить** для его **контактной информации**.</span><span class="sxs-lookup"><span data-stu-id="8f046-119">Select an active user and select **Edit** for their **Contact information**.</span></span> 
+1. <span data-ttu-id="8f046-120">Обновите значение **мобильного телефона** , указав новое число и нажмите кнопку **сохранить**.</span><span class="sxs-lookup"><span data-stu-id="8f046-120">Update the **Mobile phone** value with a new number and Select **Save**.</span></span>
+
+<span data-ttu-id="8f046-121">Дождитесь получения уведомления, как указано в **консоли отладки**кода Visual Studio:</span><span class="sxs-lookup"><span data-stu-id="8f046-121">Wait for the notification to be received as indicated in the Visual Studio Code **Debug Console**:</span></span>
 
 ```shell
 Received notification: 'Users/7a7fded6-0269-42c2-a0be-512d58da4463', 7a7fded6-0269-42c2-a0be-512d58da4463
 ```
 
-<span data-ttu-id="e03f0-121">Теперь приложение будет инициировать разностный запрос с графом, чтобы получить всех пользователей и выйти из этих сведений в выходные данные консоли.</span><span class="sxs-lookup"><span data-stu-id="e03f0-121">The application will now initiate a delta query with the graph to get all the users and log out some of their details to the console output.</span></span>
+<span data-ttu-id="8f046-122">Теперь приложение будет инициировать разностный запрос с графом, чтобы получить всех пользователей и выйти из этих сведений в выходные данные консоли.</span><span class="sxs-lookup"><span data-stu-id="8f046-122">The application will now initiate a delta query with the graph to get all the users and log out some of their details to the console output.</span></span>
 
 ```shell
 User: 19e429d2-541a-4e0b-9873-6dff9f48fabe, Allan Deyoung
@@ -156,12 +163,12 @@ User: d4e3a3e0-72e9-41a6-9538-c23e10a16122,   Removed?:deleted
 Got deltalink
 ```
 
-<span data-ttu-id="e03f0-122">На портале управления пользователями снова измените пользователя и **Сохраните** его, используя другой номер мобильного телефона.</span><span class="sxs-lookup"><span data-stu-id="e03f0-122">In the user management portal edit the user again and **Save** again using a different mobile phone number.</span></span>
+<span data-ttu-id="8f046-123">На портале администрирования Microsoft 365 повторите процедуру редактирования пользователя и повторите попытку **сохранения** .</span><span class="sxs-lookup"><span data-stu-id="8f046-123">In the Microsoft 365 Admin Portal, repeat the process of editing a user and **Save** again.</span></span>
 
-<span data-ttu-id="e03f0-123">Приложение получит еще одно уведомление и запросит граф еще раз с помощью полученной последней разностной ссылки.</span><span class="sxs-lookup"><span data-stu-id="e03f0-123">The application will receive another notification and will query the graph again using the last delta link it received.</span></span> <span data-ttu-id="e03f0-124">Тем не менее, на этот раз вы заметите, что в результатах было возвращено только измененный пользователь.</span><span class="sxs-lookup"><span data-stu-id="e03f0-124">However, this time you will notice that only the modified user was returned in the results.</span></span>
+<span data-ttu-id="8f046-124">Приложение получит еще одно уведомление и запросит граф еще раз с помощью полученной последней разностной ссылки.</span><span class="sxs-lookup"><span data-stu-id="8f046-124">The application will receive another notification and will query the graph again using the last delta link it received.</span></span> <span data-ttu-id="8f046-125">Тем не менее, на этот раз вы заметите, что в результатах было возвращено только измененный пользователь.</span><span class="sxs-lookup"><span data-stu-id="8f046-125">However, this time you will notice that only the modified user was returned in the results.</span></span>
 
 ```shell
 User: 7a7fded6-0269-42c2-a0be-512d58da4463, Adele Vance
 ```
 
-<span data-ttu-id="e03f0-125">Используя это сочетание уведомлений с разностным запросом, вы можете быть уверены, что вы не пропустите обновление ресурса.</span><span class="sxs-lookup"><span data-stu-id="e03f0-125">Using this combination of notifications with delta query you can be assured you wont miss any updates to a resource.</span></span> <span data-ttu-id="e03f0-126">Уведомления могут быть пропущены из-за проблем с временным подключением, но при следующем получении приложением уведомления все изменения, внесенные с момента последнего успешного запроса, будут извлекаться.</span><span class="sxs-lookup"><span data-stu-id="e03f0-126">Notifications may be missed due to transient connection issues, however the next time your application gets a notification it will pick up all the changes since the last successful query.</span></span>
+<span data-ttu-id="8f046-126">Используя это сочетание уведомлений с разностным запросом, вы можете быть уверены, что вы не пропустите обновление ресурса.</span><span class="sxs-lookup"><span data-stu-id="8f046-126">Using this combination of notifications with delta query you can be assured you wont miss any updates to a resource.</span></span> <span data-ttu-id="8f046-127">Уведомления могут быть пропущены из-за проблем с временным подключением, но при следующем получении приложением уведомления все изменения, внесенные с момента последнего успешного запроса, будут извлекаться.</span><span class="sxs-lookup"><span data-stu-id="8f046-127">Notifications may be missed due to transient connection issues, however the next time your application gets a notification it will pick up all the changes since the last successful query.</span></span>
