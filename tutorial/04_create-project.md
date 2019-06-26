@@ -1,27 +1,33 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-Откройте командную строку, перейдите к каталогу, в котором у вас есть права на создание файлов, и выполните следующие команды, чтобы создать новое приложение .NET Core WebApi.
+Откройте командную строку, перейдите к каталогу, в котором у вас есть права на создание проекта, и выполните следующую команду, чтобы создать новое приложение .NET Core WebApi:
 
 ```shell
 dotnet new webapi -o msgraphapp
 ```
 
-После завершения выполнения команды выполните следующие команды, чтобы новый проект выполнялся правильно.
+После создания приложения выполните следующие команды, чтобы новый проект выполнялся правильно.
 
-```shell
-cd msgraphapp
-dotnet add package Microsoft.Identity.Client
-dotnet add package Microsoft.Graph
-dotnet run
-```
+  ```shell
+  cd msgraphapp
+  dotnet add package Microsoft.Identity.Client
+  dotnet add package Microsoft.Graph
+  dotnet run
+  ```
 
-Приложение запустится и выводится:
+  Приложение запустится и выведет следующие данные:
 
-```shell
-Now listening on: http://localhost:5000
-```
-
-Если вы не видите этот результат или вы видите сообщение об ошибке, вероятно, проблема связана с [пакетом SDK .NET Core 2,2](https://dotnet.microsoft.com/download) , установленным на компьютере для разработки, который необходимо исправить перед продолжением работы.
+  ```shell
+  info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[0] ...
+  info: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[58] ...
+  warn: Microsoft.AspNetCore.DataProtection.KeyManagement.XmlKeyManager[35] ...
+  info: Microsoft.AspNetCore.DataProtection.Repositories.FileSystemXmlRepository[39] ...
+  Hosting environment: Development
+  Content root path: /Users/ac/_play/graphchangenotifications/msgraphapp
+  Now listening on: https://localhost:5001
+  Now listening on: http://localhost:5000
+  Application started. Press Ctrl+C to shut down.
+  ```
 
 Остановите работу приложения, нажав <kbd>CTRL</kbd>+<kbd>C</kbd>.
 
@@ -31,4 +37,4 @@ Now listening on: http://localhost:5000
 code .
 ```
 
-Когда откроется диалоговое окно, предлагающее добавить в проект необходимые ресурсы, нажмите кнопку **Да**.
+Если в Visual Studio Code отображается диалоговое окно с вопросом о том, хотите ли вы добавить в проект необходимые ресурсы, нажмите кнопку **Да**.

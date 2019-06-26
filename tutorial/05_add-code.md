@@ -10,7 +10,9 @@
 
 Приложение использует несколько новых классов модели для (de) сериализации сообщений в Microsoft Graph или из него.
 
-Щелкните правой кнопкой мыши дерево файлов проекта и выберите пункт **создать папку**. Назовите **модели** : IT: щелкните **** правой кнопкой мыши папку Models и добавьте три новых файла:
+Щелкните правой кнопкой мыши дерево файлов проекта и выберите пункт **создать папку**. Назовите **модели** ИТ
+
+Щелкните правой кнопкой мыши **** папку Models и добавьте три новых файла:
 
 - **Notification.cs**
 - **ResourceData.cs**
@@ -103,7 +105,7 @@ namespace msgraphapp
 }
 ```
 
-Откройте файл **Startup.CS** и замените его содержимое на приведенный ниже код.
+Откройте файл **Startup.CS** . Откройте метод method `ConfigureServices()` & замените его следующим кодом:
 
 ```csharp
 public void ConfigureServices(IServiceCollection services)
@@ -136,9 +138,9 @@ public void ConfigureServices(IServiceCollection services)
 
 Замените следующие переменные значениями, скопированными ранее:
 
-    - `<NGROK URL>`необходимо указать URL-адрес ngrok HTTPS, скопированный ранее.
-    - `<TENANT ID>`Это должен быть идентификатор клиента Office 365, например. **contoso.onmicrosoft.com**.
-    - `<APP ID>`и `<APP SECRET>` он должен быть идентификатором и секретом приложения, скопированным ранее при создании регистрации приложения.
+- `<NGROK URL>`необходимо указать URL-адрес ngrok HTTPS, скопированный ранее.
+- `<TENANT ID>`Это идентификатор клиента Office 365, например: **contoso.onmicrosoft.com**.
+- `<APP ID>`и `<APP SECRET>` он должен быть идентификатором и секретом приложения, скопированным ранее при создании регистрации приложения.
 
 ### <a name="add-notification-controller"></a>Добавление контроллера уведомлений
 
@@ -146,7 +148,7 @@ public void ConfigureServices(IServiceCollection services)
 
 Щелкните правой кнопкой мыши `Controllers` папку, выберите пункт **создать файл**и назовите контроллер **NotificationsController.CS**.
 
-Замените содержимое **NotificationController.CS** следующим:
+Замените содержимое **NotificationController.CS** на следующий код:
 
 ```csharp
 using System;
@@ -244,23 +246,19 @@ namespace msgraphapp.Controllers
 
     private async Task<string> GetAccessToken()
     {
-        ClientCredential clientCredentials = new ClientCredential(secret: config.AppSecret);
+      IConfidentialClientApplication app = ConfidentialClientApplicationBuilder.Create(config.AppId)
+        .WithClientSecret(config.AppSecret)
+        .WithAuthority($"https://login.microsoftonline.com/{config.TenantId}")
+        .WithRedirectUri("https://daemon")
+        .Build();
 
-        var app = new ConfidentialClientApplication(
-            clientId: config.AppId,
-            authority: $"https://login.microsoftonline.com/{config.TenantId}",
-            redirectUri: "https://daemon",
-            clientCredential: clientCredentials,
-            userTokenCache: null,
-            appTokenCache: new TokenCache()
-        );
+      string[] scopes = new string[] { "https://graph.microsoft.com/.default" };
 
-        string[] scopes = new string[] { "https://graph.microsoft.com/.default" };
+      var result = await app.AcquireTokenForClient(scopes).ExecuteAsync();
 
-        var result = await app.AcquireTokenForClientAsync(scopes);
-
-        return result.AccessToken;
+      return result.AccessToken;
     }
+
   }
 }
 ```

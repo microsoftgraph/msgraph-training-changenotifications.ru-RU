@@ -7,10 +7,20 @@
 
 ## <a name="prerequisites"></a>Необходимые условия
 
-Прежде чем приступить к работе с этим руководством, на компьютере для разработки должен быть установлен [пакет SDK для .NET Core 2,2](https://dotnet.microsoft.com/download) и [Visual Studio Code](https://code.visualstudio.com/) . Если вы не установили их, посетите предыдущие ссылки для получения вариантов загрузки.
+Прежде чем приступить к работе с этим руководством, на компьютере для разработки должен быть установлен [пакет SDK для .NET Core 2,2](https://dotnet.microsoft.com/download) и [Visual Studio Code](https://code.visualstudio.com/) .
 
 > [!NOTE]
 > Это руководство было написано с помощью .NET Core версии 2,2. Действия, описанные в этом руководстве, могут работать с другими версиями, но не тестировались.
+
+## <a name="watch-the-tutorial"></a>Просмотр руководства
+
+Этот модуль записан и доступен в канале разработки Office на YouTube.
+
+<!-- markdownlint-disable MD033 MD034 -->
+<br/>
+
+> [!VIDEO https://www.youtube-nocookie.com/embed/fThiCZmIcMQ]
+<!-- markdownlint-enable MD033 MD034 -->
 
 ## <a name="feedback"></a>Обратная связь
 

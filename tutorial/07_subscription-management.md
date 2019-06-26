@@ -1,50 +1,17 @@
 <!-- markdownlint-disable MD002 MD041 -->
 
-Подписки на уведомления истечет, и их необходимо периодически обновлять.
+Подписки на уведомления истечет, и их необходимо периодически обновлять. В следующих действиях показано, как обновлять уведомления.
 
-Откройте **NotificationsController.CS** и замените `Get()` метод следующим кодом:
+Открытие **контроллеров > файл NotificationsController.CS**
+
+Добавьте в `NotificationsController` класс следующие два объявления членов:
 
 ```csharp
 private static Dictionary<string, Subscription> Subscriptions = new Dictionary<string, Subscription>();
 private static Timer subscriptionTimer = null;
-
-[HttpGet]
-public ActionResult<string> Get()
-{
-  var graphServiceClient = GetGraphClient();
-
-  var sub = new Microsoft.Graph.Subscription();
-  sub.ChangeType = "updated";
-  sub.NotificationUrl = config.Ngrok + "/api/notifications";
-  sub.Resource = "/users";
-  sub.ExpirationDateTime = DateTime.UtcNow.AddMinutes(5);
-  sub.ClientState = "SecretClientState";
-
-  var newSubscription = graphServiceClient
-    .Subscriptions
-    .Request()
-    .AddAsync(sub).Result;
-
-  Subscriptions[newSubscription.Id] = newSubscription;
-
-  if(subscriptionTimer == null)
-  {
-      subscriptionTimer = new Timer(CheckSubscriptions, null, 5000, 15000);
-  }
-
-  return $"Subscribed. Id: {newSubscription.Id}, Expiration: {newSubscription.ExpirationDateTime}";
-}
 ```
 
-Добавьте приведенный ниже оператор using в начало файла.
-
-```csharp
-using System.Threading;
-```
-
-В приведенном выше коде добавляется фоновый таймер, который будет срабатывать каждые 15 секунд, и проверьте, истек ли срок действия подписки.
-
-Добавьте следующие новые методы:
+Добавьте следующие новые методы. Они реализуют фоновый таймер, который будет запускаться каждые 15 секунд, чтобы проверить, истек ли срок действия подписок. Если они есть, они будут обновлены.
 
 ```csharp
 private void CheckSubscriptions(Object stateInfo)
@@ -81,11 +48,53 @@ private void RenewSubscription(Subscription subscription)
 }
 ```
 
-Этот `CheckSubscriptions` метод вызывается каждые 15 секунд с помощью таймера. Для производственного использования это значение должно быть более разумным, чтобы уменьшить количество ненужных вызовов Graph. `RenewSubscription` Метод обновляет подписку и вызывается только в том случае, если срок действия подписки истечет в течение следующих двух минут.
+Этот `CheckSubscriptions` метод вызывается каждые 15 секунд с помощью таймера. Для производственного использования это значение должно быть более разумным, чтобы уменьшить количество ненужных звонков в Microsoft Graph.
 
-Чтобы запустить приложение, выберите **отладка > начать отладку** . Перейдите по следующему URL- `*http://localhost:5000/api/notifications` адресу, чтобы зарегистрировать новую подписку.
+`RenewSubscription` Метод обновляет подписку и вызывается только в том случае, если срок действия подписки истечет в течение следующих двух минут.
 
-В `DEBUG OUTPUT` окне Visual Studio Code отображается следующий результат приблизительно каждые 15 секунд.  Это таймер проверки подписки на срок действия.
+Укажите метод `Get()` и замените его следующим кодом:
+
+```csharp
+[HttpGet]
+public ActionResult<string> Get()
+{
+    var graphServiceClient = GetGraphClient();
+
+    var sub = new Microsoft.Graph.Subscription();
+    sub.ChangeType = "updated";
+    sub.NotificationUrl = config.Ngrok + "/api/notifications";
+    sub.Resource = "/users";
+    sub.ExpirationDateTime = DateTime.UtcNow.AddMinutes(5);
+    sub.ClientState = "SecretClientState";
+
+    var newSubscription = graphServiceClient
+      .Subscriptions
+      .Request()
+      .AddAsync(sub).Result;
+
+    Subscriptions[newSubscription.Id] = newSubscription;
+
+    if(subscriptionTimer == null)
+    {
+        subscriptionTimer = new Timer(CheckSubscriptions, null, 5000, 15000);
+    }
+
+    return $"Subscribed. Id: {newSubscription.Id}, Expiration: {newSubscription.ExpirationDateTime}";
+}
+```
+
+Добавьте следующий оператор после существующих `using` операторов в начале файла:
+
+```csharp
+using System.Threading;
+```
+
+### <a name="test-the-changes"></a>Протестируйте изменения:
+
+В Visual Studio Code выберите **отладка > начать отладку** для запуска приложения.
+Перейдите по следующему URL-адресу: **http://localhost:5000/api/notifications**. При этом будет зарегистрирована новая подписка.
+
+В окне **консоли отладки** кода Visual Studio приблизительно каждые 15 секунд Обратите внимание на то, что время ожидания подписки проверяется следующим образом:
 
 ```shell
 Checking subscriptions 12:32:51.882

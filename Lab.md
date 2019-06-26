@@ -16,7 +16,7 @@
 
 ## <a name="prerequisites"></a>Необходимые условия
 
-Прежде чем приступить к работе с этим руководством, на компьютере для разработки должен быть установлен [пакет SDK для .NET Core 2,2](https://dotnet.microsoft.com/download) и [Visual Studio Code](https://code.visualstudio.com/) . Если вы не установили их, посетите предыдущие ссылки для получения вариантов загрузки.
+Прежде чем приступить к работе с этим руководством, на компьютере для разработки должен быть установлен [пакет SDK для .NET Core 2,2](https://dotnet.microsoft.com/download) и [Visual Studio Code](https://code.visualstudio.com/) . 
 
 ## <a name="completed-exercises"></a>Завершенные упражнения
 
