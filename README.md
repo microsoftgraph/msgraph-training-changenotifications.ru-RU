@@ -1,4 +1,4 @@
-# <a name="microsoft-graph-training-module---using-change-notifications-and-track-changes-with-microsoft-graph"></a>Модуль обучения Microsoft Graph — использование уведомлений об изменениях и отслеживание изменений с помощью Microsoft Graph
+# <a name="microsoft-graph-training-module---using-change-notifications-and-track-changes-with-microsoft-graph"></a>Обучающий модуль по Microsoft Graph: использование уведомлений об изменениях и отслеживание изменений с помощью Microsoft Graph
 
 В этом модуле вы узнаете, как работать с уведомлениями об изменениях (веб-перехватчиками) & отслеживать изменения (разностный запрос) в Microsoft Graph.
 
@@ -27,7 +27,7 @@
 
 ## <a name="version-history"></a>Журнал версий
 
-| Версия |      Дата      |                     Comments                     |
+| Версия |      Дата      |                     Примечания                     |
 | ------- | -------------- | ------------------------------------------------ |
 | 1.3     | 18 июня 2019 г.  | Обновлена запись сведений о обновленной записи презентации |
 | 1.2     | 30 мая 2019 г.   | Обновление содержимого Fy2019Q4                         |

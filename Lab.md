@@ -14,7 +14,7 @@
 1. [Запрос изменений](./tutorial/08_deltaquery.md)
 1. [Завершенная Лаборатория](./tutorial/09_completed.md)
 
-## <a name="prerequisites"></a>Необходимые условия
+## <a name="prerequisites"></a>Предварительные требования
 
 Прежде чем приступить к работе с этим руководством, на компьютере для разработки должен быть установлен [пакет SDK для .NET Core 2,2](https://dotnet.microsoft.com/download) и [Visual Studio Code](https://code.visualstudio.com/) . 
 
